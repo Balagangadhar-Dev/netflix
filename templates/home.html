@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Netflix Movies</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+        }
+
+        /* Navbar */
+
+        nav {
+            background: black;
+            padding: 20px 50px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: #e50914;
+            font-size: 34px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* Hero */
+
+        .hero {
+            height: 250px;
+            background:
+                linear-gradient(to bottom, rgba(0, 0, 0, .2), #141414),
+                url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1500&q=80");
+
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 40px 60px;
+        }
+
+        .hero h1 {
+            font-size: 50px;
+        }
+
+        /* Search */
+
+        .search-box {
+            padding: 30px 60px 10px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+        }
+
+        .search-box input::placeholder {
+            color: #bbb;
+        }
+
+        /* Movies */
+
+        .container {
+            padding: 20px 60px 40px;
+        }
+
+        .container h2 {
+            margin-bottom: 25px;
+        }
+
+        .movies {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: .3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(255,255,255,.25);
+        }
+
+        .card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+
+        .info {
+            padding: 15px;
+        }
+
+        .info h3 {
+            margin-bottom: 10px;
+        }
+
+        .genre {
+            color: #bbbbbb;
+        }
+
+        .year {
+            color: #46d369;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Modal */
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0,0,0,.92);
+        }
+
+        .modal-content {
+            background: #1f1f1f;
+            width: 80%;
+            max-width: 1000px;
+            margin: 40px auto;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .banner {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+
+        .details {
+            padding: 30px;
+        }
+
+        .details h1 {
+            margin-bottom: 15px;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .description {
+            margin: 20px 0;
+            line-height: 1.7;
+            color: #ddd;
+        }
+
+        iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .close {
+            position: absolute;
+            right: 40px;
+            top: 20px;
+            font-size: 50px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .close:hover {
+            color: #e50914;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">NETFLIX</div>
+</nav>
+
+<!-- Search -->
+<div class="search-box">
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Search movies, genres, directors..."
+        onkeyup="searchMovie()">
+</div>
+
+<div class="container">
+
+    <h2>Trending Now</h2>
+
+    <div class="movies">
+
+        {% for movie in movies %}
+
+        <div class="card"
+             data-name="{{ movie.name }}"
+             data-genre="{{ movie.genre }}"
+             data-year="{{ movie.releaseYear }}"
+             data-rating="{{ movie.rating }}"
+             data-duration="{{ movie.duration }}"
+             data-director="{{ movie.director }}"
+             data-cast="{{ movie.cast }}"
+             data-description="{{ movie.description }}"
+             data-poster="{{ movie.bannerUrl }}"
+             data-trailer="{{ movie.trailer }}"
+             onclick="showMovie(this)">
+
+            <img src="{{ movie.bannerUrl }}" alt="{{ movie.name }}">
+
+            <div class="info">
+                <h3>{{ movie.name }}</h3>
+                <p class="genre">{{ movie.genre }}</p>
+                <p class="year">{{ movie.releaseYear }}</p>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+
+<div class="modal" id="movieModal">
+
+    <span class="close" onclick="closeMovie()">&times;</span>
+
+    <div class="modal-content">
+
+        <img id="poster" class="banner">
+
+        <div class="details">
+
+            <h1 id="title"></h1>
+
+            <div class="meta">
+                <span id="year"></span>
+                <span id="genre"></span>
+                <span id="rating"></span>
+                <span id="duration"></span>
+            </div>
+
+            <p><strong>Director:</strong> <span id="director"></span></p>
+
+            <br>
+
+            <p><strong>Cast:</strong> <span id="cast"></span></p>
+
+            <div class="description" id="description"></div>
+
+            <h2>Official Trailer</h2>
+
+            <br>
+
+            <iframe
+                id="trailer"
+                src=""
+                title="YouTube video player"
+                frameborder="0"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function searchMovie() {
+
+    let input = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(function(card){
+
+        let name = card.dataset.name.toLowerCase();
+        let genre = card.dataset.genre.toLowerCase();
+        let director = card.dataset.director.toLowerCase();
+
+        if (
+            name.includes(input) ||
+            genre.includes(input) ||
+            director.includes(input)
+        ) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+
+    });
+
+}
+
+function showMovie(card) {
+
+    document.getElementById("movieModal").style.display = "block";
+
+    document.getElementById("poster").src = card.dataset.poster;
+    document.getElementById("title").innerHTML = card.dataset.name;
+    document.getElementById("year").innerHTML = "📅 " + card.dataset.year;
+    document.getElementById("genre").innerHTML = "🎬 " + card.dataset.genre;
+    document.getElementById("rating").innerHTML = "⭐ " + card.dataset.rating;
+    document.getElementById("duration").innerHTML = "⏱ " + card.dataset.duration;
+    document.getElementById("director").innerHTML = card.dataset.director;
+    document.getElementById("cast").innerHTML = card.dataset.cast;
+    document.getElementById("description").innerHTML = card.dataset.description;
+
+    document.getElementById("trailer").src = card.dataset.trailer;
+}
+
+function closeMovie() {
+
+    document.getElementById("movieModal").style.display = "none";
+    document.getElementById("trailer").src = "";
+
+}
+
+window.onclick = function(event){
+
+    let modal = document.getElementById("movieModal");
+
+    if(event.target == modal){
+        closeMovie();
+    }
+
+}
+
+</script>
+
+</body>
+</html>
