@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Sign Up</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1500&q=80");
+            background-size:cover;
+            background-position:center;
+            height:100vh;
+        }
+
+        .overlay{
+            width:100%;
+            height:100vh;
+            background:rgba(0,0,0,.75);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .signup-box{
+            width:380px;
+            background:rgba(0,0,0,.85);
+            padding:45px;
+            border-radius:8px;
+        }
+
+        .logo{
+            color:#E50914;
+            font-size:42px;
+            font-weight:bold;
+            letter-spacing:2px;
+            margin-bottom:30px;
+            text-align:center;
+        }
+
+        h2{
+            color:white;
+            margin-bottom:25px;
+        }
+
+        input{
+            width:100%;
+            padding:15px;
+            margin-bottom:15px;
+            background:#333;
+            color:white;
+            border:none;
+            border-radius:5px;
+            font-size:16px;
+            outline:none;
+        }
+
+        input::placeholder{
+            color:#bbb;
+        }
+
+        button{
+            width:100%;
+            padding:15px;
+            background:#E50914;
+            color:white;
+            border:none;
+            border-radius:5px;
+            font-size:18px;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        button:hover{
+            background:#c40812;
+        }
+
+        .error{
+            color:#ff4d4d;
+            margin-bottom:15px;
+        }
+
+        p{
+            margin-top:20px;
+            color:#b3b3b3;
+            text-align:center;
+        }
+
+        a{
+            color:white;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        a:hover{
+            text-decoration:underline;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="overlay">
+
+    <div class="signup-box">
+
+        <div class="logo">NETFLIX</div>
+
+        <h2>Create Account</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                required>
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                required>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required>
+
+            <button type="submit">Sign Up</button>
+
+        </form>
+
+        <p>
+            Already have an account?
+            <a href="{% url 'login' %}">Sign In</a>
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

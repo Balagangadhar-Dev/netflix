@@ -205,8 +205,19 @@
 <body>
 
 <nav>
-    <div class="logo">NETFLIX</div>
-</nav>
+
+<div class="logo">NETFLIX</div>
+
+<div style="float:right;">
+
+Welcome {{ user.username }}
+
+<a href="{% url 'logout' %}"
+style="color:white; margin-left:20px; text-decoration:none;">
+Logout
+</a>
+
+</div>
 
 <!-- Search -->
 <div class="search-box">

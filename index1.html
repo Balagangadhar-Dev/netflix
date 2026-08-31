@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive DOM Masterclass Playground</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --highlight: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+    
+    header { text-align: center; margin-bottom: 30px; }
+    header h1 { color: var(--accent); font-size: 2.2rem; margin-bottom: 8px; }
+    header p { color: var(--text-muted); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .card h2 { font-size: 1.25rem; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    .badge { font-size: 0.75rem; background: var(--border); color: var(--text-muted); padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+    input[type="text"] { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; flex: 1; min-width: 150px; }
+    button { background: var(--accent); color: var(--bg); border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s ease; }
+    button:hover { background: var(--accent-hover); }
+    button.secondary { background: var(--border); color: var(--text); }
+    button.secondary:hover { background: #475569; }
+    button.danger { background: var(--danger); color: white; }
+
+    .demo-box { background: var(--bg); border: 2px dashed var(--border); border-radius: 8px; padding: 15px; min-height: 120px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+    
+    /* Interactive Highlight Effect */
+    .dom-highlight { outline: 3px solid var(--highlight) !important; background-color: rgba(245, 158, 11, 0.15) !important; transition: all 0.3s ease; }
+    .custom-styled { background-color: #065f46 !important; border-color: var(--success) !important; color: #a7f3d0 !important; border-radius: 20px !important; transform: scale(0.98); }
+
+    /* Bubbling / Capturing Visualizer */
+    .nest-grandparent { background: #312e81; padding: 15px; border-radius: 8px; }
+    .nest-parent { background: #4338ca; padding: 15px; border-radius: 8px; margin-top: 8px; }
+    .nest-child { background: #6366f1; padding: 15px; border-radius: 8px; margin-top: 8px; text-align: center; font-weight: bold; cursor: pointer; }
+    .event-log { background: #000; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.85rem; height: 100px; overflow-y: auto; color: #34d399; }
+
+    /* Dynamic Node List */
+    .node-item { background: var(--card-bg); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Code Snippet Display */
+    pre { background: #000; padding: 10px; border-radius: 6px; font-size: 0.8rem; color: #e2e8f0; overflow-x: auto; }
+    code { color: var(--accent); }
+
+    .toggle-container { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>DOM Manipulation Masterclass</h1>
+    <p>An interactive guide to understanding the Document Object Model in real time.</p>
+  </header>
+
+  <main class="grid">
+
+    <!-- 1. SELECTORS -->
+    <section class="card">
+      <h2>1. Selecting Elements <span class="badge">querySelector / getElementById</span></h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted);">Type a CSS selector to select and highlight target elements live.</p>
+      <div class="controls">
+        <input type="text" id="selector-input" value="#target-1" placeholder="e.g. #target-1, .target-item">
+        <button id="btn-select">Select Element</button>
+      </div>
+      <div class="demo-box" id="selector-demo-area">
+        <div id="target-1" class="target-item node-item">Target #1 (id="target-1")</div>
+        <div id="target-2" class="target-item node-item">Target #2 (class="target-item")</div>
+        <div id="target-3" class="target-item node-item">Target #3 (class="target-item")</div>
+      </div>
+      <pre><code id="selector-code">document.querySelector('#target-1').classList.add('dom-highlight');</code></pre>
+    </section>
+
+    <!-- 2. NODE CRUD -->
+    <section class="card">
+      <h2>2. Node Operations <span class="badge">Create, Update, Remove</span></h2>
+      <div class="controls">
+        <button id="btn-add-node">Add Node</button>
+        <button id="btn-update-node" class="secondary">Update Text</button>
+        <button id="btn-remove-node" class="danger">Remove Last</button>
+      </div>
+      <div class="demo-box" id="node-container">
+        <div class="node-item">Initial Node 1</div>
+      </div>
+      <pre><code id="node-code">// Click actions above to see DOM code execution</code></pre>
+    </section>
+
+    <!-- 3. ATTRIBUTES & CLASSES -->
+    <section class="card">
+      <h2>3. Attributes & Classes <span class="badge">classList / setAttribute</span></h2>
+      <div class="controls">
+        <button id="btn-toggle-class">Toggle Custom Class</button>
+        <button id="btn-set-attr" class="secondary">Change Data Attribute</button>
+      </div>
+      <div class="demo-box" id="attr-demo-box">
+        <p id="attr-target" data-status="inactive">Target Element (data-status="inactive")</p>
+      </div>
+      <pre><code id="attr-code">element.classList.toggle('custom-styled');</code></pre>
+    </section>
+
+    <!-- 4. EVENTS & LISTENERS -->
+    <section class="card">
+      <h2>4. Events & Listeners <span class="badge">Mouse & Keyboard</span></h2>
+      <div class="controls">
+        <input type="text" id="keyboard-input" placeholder="Type here to capture keyboard events...">
+      </div>
+      <div class="demo-box" id="event-hover-box" style="text-align: center; justify-content: center; cursor: pointer;">
+        Hover or Click Me!
+      </div>
+      <div class="event-log" id="event-log-output">> Waiting for events...</div>
+    </section>
+
+    <!-- 5. BUBBLING & CAPTURING -->
+    <section class="card">
+      <h2>5. Bubbling vs Capturing <span class="badge">Propagation</span></h2>
+      <div class="toggle-container">
+        <label><input type="radio" name="phase" value="bubble" checked> Event Bubbling (Bottom -> Up)</label>
+        <label><input type="radio" name="phase" value="capture"> Event Capturing (Top -> Down)</label>
+      </div>
+      <div class="nest-grandparent" id="nest-grandparent">
+        Grandparent
+        <div class="nest-parent" id="nest-parent">
+          Parent
+          <div class="nest-child" id="nest-child">Click Child Element</div>
+        </div>
+      </div>
+      <div class="event-log" id="propagation-log">> Click the child element to observe event flow.</div>
+    </section>
+
+    <!-- 6. EVENT DELEGATION -->
+    <section class="card">
+      <h2>6. Event Delegation <span class="badge">Performance Pattern</span></h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Single listener on parent handles events for all current and future dynamic children.</p>
+      <div class="controls">
+        <button id="btn-add-delegated">Add Dynamic Item</button>
+      </div>
+      <div class="demo-box" id="delegation-parent">
+        <div class="node-item dynamic-item">Item 1 (Click me)</div>
+        <div class="node-item dynamic-item">Item 2 (Click me)</div>
+      </div>
+      <pre><code>// One listener attached to parent container:
+parent.addEventListener('click', (e) => {
+  if (e.target.classList.contains('dynamic-item')) { ... }
+});</code></pre>
+    </section>
+
+    <!-- 7. REAL DOM VS VIRTUAL DOM -->
+    <section class="card">
+      <h2>7. Real DOM vs Virtual DOM <span class="badge">Concept Demo</span></h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Simulate updating 50 elements continuously.</p>
+      <div class="controls">
+        <button id="btn-bench-real">Direct Real DOM Updates</button>
+        <button id="btn-bench-virtual" class="secondary">Simulated Batch Update</button>
+      </div>
+      <div style="font-size: 0.9rem;">
+        <p>Execution Time: <span id="bench-time" style="color: var(--accent); font-weight: bold;">0 ms</span></p>
+      </div>
+      <div class="demo-box" id="bench-box" style="max-height: 100px; overflow: hidden;"></div>
+    </section>
+
+    <!-- 8. BEST PRACTICES -->
+    <section class="card">
+      <h2>8. Separation of Concerns <span class="badge">Best Practices</span></h2>
+      <div style="font-size: 0.85rem;">
+        <p style="color: var(--danger); margin-bottom: 5px;">❌ <strong>Bad: Inline Handlers & Direct Styling</strong></p>
+        <pre><code>&lt;button onclick="this.style.background='red'"&gt;Click&lt;/button&gt;</code></pre>
+        <p style="color: var(--success); margin-top: 10px; margin-bottom: 5px;">✅ <strong>Good: Clean Separation (HTML + CSS + JS)</strong></p>
+        <pre><code>// HTML: &lt;button id="myBtn"&gt;Click&lt;/button&gt;
+// JS: document.getElementById('myBtn')
+//        .addEventListener('click', toggleState);</code></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- 1. SELECTORS ---
+    const btnSelect = document.getElementById('btn-select');
+    const selectorInput = document.getElementById('selector-input');
+    const selectorCode = document.getElementById('selector-code');
+
+    btnSelect.addEventListener('click', () => {
+      // Clear previous highlights
+      document.querySelectorAll('.dom-highlight').forEach(el => el.classList.remove('dom-highlight'));
+      
+      const query = selectorInput.value.trim();
+      try {
+        const targets = document.querySelectorAll(query);
+        if (targets.length > 0) {
+          targets.forEach(t => t.classList.add('dom-highlight'));
+          selectorCode.textContent = `document.querySelectorAll('${query}').forEach(el => el.classList.add('dom-highlight')); // Found ${targets.length} element(s)`;
+        } else {
+          selectorCode.textContent = `// No elements found matching '${query}'`;
+        }
+      } catch (e) {
+        selectorCode.textContent = `// Invalid CSS Selector`;
+      }
+    });
+
+    // --- 2. NODE OPERATIONS ---
+    const nodeContainer = document.getElementById('node-container');
+    const btnAddNode = document.getElementById('btn-add-node');
+    const btnUpdateNode = document.getElementById('btn-update-node');
+    const btnRemoveNode = document.getElementById('btn-remove-node');
+    const nodeCode = document.getElementById('node-code');
+
+    let nodeCount = 1;
+
+    btnAddNode.addEventListener('click', () => {
+      nodeCount++;
+      const newNode = document.createElement('div');
+      newNode.className = 'node-item';
+      newNode.textContent = `Dynamic Node ${nodeCount}`;
+      nodeContainer.appendChild(newNode);
+      nodeCode.textContent = `const newNode = document.createElement('div');\nnewNode.textContent = 'Dynamic Node ${nodeCount}';\ncontainer.appendChild(newNode);`;
+    });
+
+    btnUpdateNode.addEventListener('click', () => {
+      const lastChild = nodeContainer.lastElementChild;
+      if (lastChild) {
+        lastChild.textContent = `${lastChild.textContent} (Updated!)`;
+        nodeCode.textContent = `container.lastElementChild.textContent += ' (Updated!)';`;
+      }
+    });
+
+    btnRemoveNode.addEventListener('click', () => {
+      const lastChild = nodeContainer.lastElementChild;
+      if (lastChild) {
+        nodeContainer.removeChild(lastChild);
+        nodeCode.textContent = `container.removeChild(container.lastElementChild);`;
+      }
+    });
+
+    // --- 3. ATTRIBUTES & CLASSES ---
+    const btnToggleClass = document.getElementById('btn-toggle-class');
+    const btnSetAttr = document.getElementById('btn-set-attr');
+    const attrTarget = document.getElementById('attr-target');
+    const attrCode = document.getElementById('attr-code');
+
+    btnToggleClass.addEventListener('click', () => {
+      attrTarget.classList.toggle('custom-styled');
+      attrCode.textContent = `attrTarget.classList.toggle('custom-styled'); // Active: ${attrTarget.classList.contains('custom-styled')}`;
+    });
+
+    btnSetAttr.addEventListener('click', () => {
+      const currentStatus = attrTarget.getAttribute('data-status');
+      const newStatus = currentStatus === 'inactive' ? 'active' : 'inactive';
+      attrTarget.setAttribute('data-status', newStatus);
+      attrTarget.textContent = `Target Element (data-status="${newStatus}")`;
+      attrCode.textContent = `attrTarget.setAttribute('data-status', '${newStatus}');`;
+    });
+
+    // --- 4. EVENTS & LISTENERS ---
+    const keyboardInput = document.getElementById('keyboard-input');
+    const hoverBox = document.getElementById('event-hover-box');
+    const eventLogOutput = document.getElementById('event-log-output');
+
+    function logEvent(msg) {
+      const time = new Date().toLocaleTimeString().split(' ')[0];
+      eventLogOutput.innerHTML = `[${time}] ${msg}<br>` + eventLogOutput.innerHTML;
+    }
+
+    hoverBox.addEventListener('mouseenter', () => logEvent('Event: mouseenter on Box'));
+    hoverBox.addEventListener('mouseleave', () => logEvent('Event: mouseleave on Box'));
+    hoverBox.addEventListener('click', () => logEvent('Event: click on Box'));
+    
+    keyboardInput.addEventListener('keydown', (e) => {
+      logEvent(`Event: keydown | Key: "${e.key}" | Code: ${e.code}`);
+    });
+
+    // --- 5. BUBBLING & CAPTURING ---
+    const grandparent = document.getElementById('nest-grandparent');
+    const parent = document.getElementById('nest-parent');
+    const child = document.getElementById('nest-child');
+    const propLog = document.getElementById('propagation-log');
+
+    function logPropagation(elementName, phaseName) {
+      const time = new Date().toLocaleTimeString().split(' ')[0];
+      propLog.innerHTML += `[${time}] ${phaseName}: Triggers on ${elementName}<br>`;
+      propLog.scrollTop = propLog.scrollHeight;
+    }
+
+    function setupPropagationListeners() {
+      // Clear listeners by replacing nodes clone style or simple toggle logic
+      const useCapture = document.querySelector('input[name="phase"]:value') === 'capture';
+    }
+
+    [grandparent, parent, child].forEach(el => {
+      // Capture phase listeners
+      el.addEventListener('click', (e) => {
+        const isCapture = document.querySelector('input[name="phase"]:checked').value === 'capture';
+        if (isCapture) {
+          logPropagation(el.id.replace('nest-', '').toUpperCase(), 'CAPTURE PHASE');
+        }
+      }, true);
+
+      // Bubble phase listeners
+      el.addEventListener('click', (e) => {
+        const isBubble = document.querySelector('input[name="phase"]:checked').value === 'bubble';
+        if (isBubble) {
+          logPropagation(el.id.replace('nest-', '').toUpperCase(), 'BUBBLE PHASE');
+        }
+      }, false);
+    });
+
+    child.addEventListener('click', () => {
+      propLog.innerHTML = '> --- Event Triggered ---\n<br>';
+    }, true);
+
+    // --- 6. EVENT DELEGATION ---
+    const delegationParent = document.getElementById('delegation-parent');
+    const btnAddDelegated = document.getElementById('btn-add-delegated');
+    let itemCounter = 2;
+
+    btnAddDelegated.addEventListener('click', () => {
+      itemCounter++;
+      const newItem = document.createElement('div');
+      newItem.className = 'node-item dynamic-item';
+      newItem.textContent = `Item ${itemCounter} (Click me)`;
+      delegationParent.appendChild(newItem);
+    });
+
+    // Event listener attached ONLY to the parent
+    delegationParent.addEventListener('click', (e) => {
+      if (e.target && e.target.classList.contains('dynamic-item')) {
+        e.target.classList.toggle('dom-highlight');
+      }
+    });
+
+    // --- 7. VIRTUAL VS REAL DOM (BENCHMARK SIMULATION) ---
+    const benchBox = document.getElementById('bench-box');
+    const benchTime = document.getElementById('bench-time');
+    const btnBenchReal = document.getElementById('btn-bench-real');
+    const btnBenchVirtual = document.getElementById('btn-bench-virtual');
+
+    btnBenchReal.addEventListener('click', () => {
+      benchBox.innerHTML = '';
+      const start = performance.now();
+      
+      // Direct Real DOM manipulation: Causes repeated layout/reflow iterations
+      for (let i = 0; i < 150; i++) {
+        const div = document.createElement('div');
+        div.textContent = `Real DOM Item ${i}`;
+        benchBox.appendChild(div); // Writes to active DOM 150 times
+      }
+      
+      const duration = performance.now() - start;
+      benchTime.textContent = `${duration.toFixed(2)} ms (150 Direct Layout Operations)`;
+    });
+
+    btnBenchVirtual.addEventListener('click', () => {
+      benchBox.innerHTML = '';
+      const start = performance.now();
+      
+      // Virtual DOM concept simulation: Batching updates in memory (DocumentFragment)
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < 150; i++) {
+        const div = document.createElement('div');
+        div.textContent = `Batched Item ${i}`;
+        fragment.appendChild(div); // Writes to memory buffer
+      }
+      benchBox.appendChild(fragment); // Single layout/reflow write to real DOM
+      
+      const duration = performance.now() - start;
+      benchTime.textContent = `${duration.toFixed(2)} ms (1 Single Batched Reflow)`;
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 """
-URL configuration for netflix project.
+URL configuration for Hello project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/6.0/topics/http/urls/
@@ -15,10 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from app.views import home
+from django.urls import path, include
+from app.views import home, addMovie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home, name = 'home')
+    path('', home, name='home'),
+    path("add/", addMovie, name="add_movie"),
+    path("", include("accounts.urls")),
 ]

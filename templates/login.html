@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Netflix Login</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1500&q=80");
+    background-size:cover;
+}
+
+.overlay{
+    background:rgba(0,0,0,.75);
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-box{
+
+    width:350px;
+    background:rgba(0,0,0,.85);
+
+    padding:40px;
+    border-radius:8px;
+}
+
+.logo{
+
+    color:#E50914;
+    font-size:45px;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+h2{
+    color:white;
+}
+
+input{
+
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    background:#333;
+    border:none;
+    color:white;
+    border-radius:5px;
+}
+
+button{
+
+    width:100%;
+    padding:15px;
+    background:#E50914;
+    color:white;
+    border:none;
+    font-size:18px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+
+    background:#c40812;
+}
+
+p{
+
+    color:white;
+}
+
+a{
+
+    color:white;
+}
+
+.error{
+
+    color:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="overlay">
+
+<div class="login-box">
+
+<div class="logo">NETFLIX</div>
+
+<h2>Sign In</h2>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+
+{% csrf_token %}
+
+<input
+type="text"
+name="username"
+placeholder="Username">
+
+<input
+type="password"
+name="password"
+placeholder="Password">
+
+<button>Sign In</button>
+
+</form>
+
+<p>
+
+New to Netflix?
+
+<a href="{% url 'signup' %}">
+Sign Up
+</a>
+
+</p>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
