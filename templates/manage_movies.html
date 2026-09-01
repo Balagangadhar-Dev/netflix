@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Manage Movies</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #141414; color: white; }
+        
+        nav {
+            background: black;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { color: #e50914; font-size: 34px; font-weight: bold; letter-spacing: 2px; }
+        nav a { color: white; text-decoration: none; margin-left: 20px; }
+        nav a:hover { color: #e50914; }
+
+        .container { padding: 40px 60px; }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn-add {
+            background: #e50914;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-add:hover { background: #c40812; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #222;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th { background: #111; color: #aaa; text-transform: uppercase; font-size: 14px; }
+        tr:hover { background: #2a2a2a; }
+        
+        .banner-thumb { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; }
+        
+        .action-links a {
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .btn-edit { background: #fff; color: #000; }
+        .btn-edit:hover { background: #ddd; }
+        .btn-delete { background: transparent; color: #e50914; border: 1px solid #e50914; }
+        .btn-delete:hover { background: #e50914; color: white; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">NETFLIX</div>
+    <div>
+        <a href="{% url 'home' %}">Back to Browse</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="header-actions">
+        <h2>Manage Content</h2>
+        <a href="{% url 'add_movie' %}" class="btn-add">+ Add Movie</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Poster</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Year</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in movies %}
+            <tr>
+                <td><img src="{{ movie.bannerUrl }}" class="banner-thumb" alt="poster"></td>
+                <td><strong>{{ movie.name }}</strong></td>
+                <td>{{ movie.genre }}</td>
+                <td>{{ movie.releaseYear }}</td>
+                <td class="action-links">
+                    <a href="{% url 'edit_movie' movie.id %}" class="btn-edit">Edit</a>
+                    <a href="{% url 'delete_movie' movie.id %}" class="btn-delete">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center; padding:30px;">No movies found. Add one!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

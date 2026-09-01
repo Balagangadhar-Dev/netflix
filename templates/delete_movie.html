@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Netflix - Delete Movie</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif; }
+        body { background: #141414; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        .delete-box {
+            background: #222;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            width: 400px;
+            color: white;
+        }
+        .delete-box h2 { margin-bottom: 20px; }
+        .delete-box p { color: #bbb; margin-bottom: 30px; line-height: 1.5; }
+        
+        .actions { display: flex; gap: 15px; }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-confirm { background: #e50914; color: white; }
+        .btn-confirm:hover { background: #c40812; }
+        
+        .btn-cancel { background: #fff; color: #000; text-decoration: none; display: flex; justify-content: center; align-items: center; flex: 1; }
+        .btn-cancel:hover { background: #ddd; }
+    </style>
+</head>
+<body>
+
+<div class="delete-box">
+    <h2>Delete Movie?</h2>
+    <p>Are you sure you want to permanently delete <strong>"{{ movie.name }}"</strong>? This action cannot be undone.</p>
+    
+    <form method="POST" class="actions">
+        {% csrf_token %}
+        <a href="{% url 'manage_movies' %}" class="btn-cancel">Cancel</a>
+        <button type="submit" class="btn-confirm">Yes, Delete</button>
+    </form>
+</div>
+
+</body>
+</html>

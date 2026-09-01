@@ -1,15 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .movies import movies_data
 
 from django.contrib.auth.decorators import login_required
 
-
-# Create your views here.
 from .models import Movie
 from .forms import MovieForm
-
-
-
 
 @login_required
 def home(request):
@@ -29,3 +24,33 @@ def addMovie(request):
         form = MovieForm()
         
     return render(request, "add_movie.html", {"form": form})
+
+
+@login_required
+def manageMovies(request):
+    movies = Movie.objects.all().order_by('-releaseYear')
+    return render(request, "manage_movies.html", {"movies": movies})
+
+@login_required
+def editMovie(request, pk):
+    movie = get_object_or_404(Movie, id=pk)
+    
+    if request.method == "POST":
+        form = MovieForm(request.POST, instance=movie)
+        if form.is_valid():
+            form.save()
+            return redirect("manage_movies")
+    else:
+        form = MovieForm(instance=movie)
+    return render(request, "add_movie.html", {"form": form})
+
+
+@login_required
+def deleteMovie(request, pk):
+    movie = get_object_or_404(Movie, id=pk)
+    
+    if request.method == "POST":
+        movie.delete()
+        return redirect("manage_movies")
+        
+    return render(request, "delete_movie.html", {"movie": movie})

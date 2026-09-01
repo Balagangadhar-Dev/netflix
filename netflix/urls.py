@@ -23,4 +23,5 @@ urlpatterns = [
     path('', home, name='home'),
     path("add/", addMovie, name="add_movie"),
     path("", include("accounts.urls")),
+    path("", include("app.urls"))
 ]
