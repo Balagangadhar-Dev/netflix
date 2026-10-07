@@ -117,10 +117,12 @@
     </div>
 
 
-    <script>
+<script>
 
 
-        // Get HTML elements
+
+
+     // Get HTML elements
 
         const taskInput = document.getElementById("taskInput");
 
@@ -131,11 +133,20 @@
 
 
 
+
+
+
+
         addBtn.addEventListener("click", function() {
 
             // Get value entered by user
 
             const task = taskInput.value.trim();
+
+
+
+
+
 
 
 
@@ -225,16 +236,8 @@
 
 
 
-document.addEventListener("keydown", (e) => {
-  console.log(e.key);     // "Enter", "a"…
-  console.log(e.code);    // "KeyA", "Space"
-  console.log(e.keyCode); // 65 for "a"
-});
 
-
-    </script>
-
-
+</script>
 
 </body>
 

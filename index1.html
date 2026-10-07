@@ -1,5 +1,5 @@
-
     <script>
+
 
         // Get HTML elements
 
@@ -10,13 +10,20 @@
         const taskList = document.getElementById("taskList");
 
 
-        // When Add button is clicked
+
 
         addBtn.addEventListener("click", function() {
 
             // Get value entered by user
 
             const task = taskInput.value.trim();
+
+
+
+
+
+
+
 
 
             // Check if input is empty
@@ -27,6 +34,13 @@
 
                 return;
             }
+
+
+
+
+
+
+
 
 
             // Create a new <li> element
@@ -88,4 +102,16 @@
 
         });
 
+
+
+
+
+document.addEventListener("keydown", (e) => {
+  console.log(e.key);     // "Enter", "a"…
+  console.log(e.code);    // "KeyA", "Space"
+  console.log(e.keyCode); // 65 for "a"
+});
+
+
     </script>
+

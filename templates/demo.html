@@ -1,0 +1,122 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Home Page -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Faculty Page -->
+
+
+{% extends 'base.html' %}
+
+{% block title %}Faculty Profiles | CS Department{% endblock %}
+
+{% block content %}
+    <h2>Faculty Directory</h2>
+    <p>Meet our professors and review their research areas.</p>
+
+    <div class="faculty-grid">
+        <!-- Example of looping through database records -->
+        {% for professor in faculty_list %}
+            <div class="faculty-card">
+                <h3>{{ professor.name }}</h3>
+                <p><strong>Specialization:</strong> {{ professor.expertise }}</p>
+                <a href="mailto:{{ professor.email }}">Contact</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.shortcuts import render
+
+def faculty_profile_view(request):
+    # Synthetic faculty dataset
+    faculty_data = [
+        {
+            "name": "Dr. Ramesh Sharma",
+            "designation": "Professor & Head of Department",
+            "expertise": "Distributed Systems & Cloud Architecture",
+            "email": "ramesh.sharma@department.edu",
+            "room": "Room 402, Academic Block A",
+        },
+        {
+            "name": "Dr. Priya Deshmukh",
+            "designation": "Associate Professor",
+            "expertise": "Natural Language Processing & LLMs",
+            "email": "priya.deshmukh@department.edu",
+            "room": "Room 315, Academic Block A",
+        },
+        {
+            "name": "Prof. Balagangadhar R.",
+            "designation": "Assistant Professor",
+            "expertise": "Data Science & Recommender Systems",
+            "email": "balagangadhar.r@department.edu",
+            "room": "Room 208, Academic Block B",
+        },
+        {
+            "name": "Dr. Amit Kulkarni",
+            "designation": "Assistant Professor",
+            "expertise": "Cybersecurity & Cryptography",
+            "email": "amit.kulkarni@department.edu",
+            "room": "Room 210, Academic Block B",
+        },
+        {
+            "name": "Prof. Sneha Verma",
+            "designation": "Assistant Professor",
+            "expertise": "Full-Stack Web Engineering & DevOps",
+            "email": "sneha.verma@department.edu",
+            "room": "Room 204, Academic Block B",
+        },
+    ]
+
+    context = {
+        "faculty_list": faculty_data,
+        "page_title": "Faculty Directory",
+    }
+    
+    return render(request, "faculty.html", context)
