@@ -20,8 +20,9 @@ from app.views import home, addMovie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('app.api_urls')),  # DRF API CRUD endpoints: /api/movies/
     path('', home, name='home'),
     path("add/", addMovie, name="add_movie"),
     path("", include("accounts.urls")),
-    path("", include("app.urls"))
+    path("", include("app.urls")),
 ]
